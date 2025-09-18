@@ -9,21 +9,22 @@ function convertToObject(sourceString) {
   const declarations = sourceString
     .split(';')
     .map((fragment) => fragment.trim())
-    .filter((line) => line.length > 0);
+    .filter((line) => line.length > 0)
+    .filter((line) => line.includes(':'));
 
   const entries = declarations
     .map((declaration) => {
       const [name, ...valueParts] = declaration.split(':');
+      const key = name.trim();
+      const value = valueParts.join(':').trim();
 
-      if (valueParts.length === 0) {
+      if (!key || !value) {
         return null;
       }
 
-      const value = valueParts.join(':').trim();
-
-      return [name.trim(), value];
+      return [key, value];
     })
-    .filter((line) => line.length > 0);
+    .filter(Boolean);
 
   return Object.fromEntries(entries);
 }
